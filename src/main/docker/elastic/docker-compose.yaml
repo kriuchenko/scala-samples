@@ -1,0 +1,28 @@
+version: "3.0"
+services:
+  elasticsearch:
+    container_name: elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    environment:
+      - xpack.security.enabled=false
+      - node.name=es01
+      - cluster.initial_master_nodes=es01
+      - bootstrap.memory_lock=false
+    networks:
+      - elastic
+    ports:
+      - 9200:9200
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elastic:9200
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+networks:
+  elastic:
+    driver: bridge
